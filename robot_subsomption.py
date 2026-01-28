@@ -1,10 +1,5 @@
-
-
-
 from robot import * 
-import random
 from random import random
-
 nb_robots = 0
 debug = True
 
@@ -19,6 +14,19 @@ class Robot_player(Robot):
         self.robot_id = nb_robots
         nb_robots+=1
         super().__init__(x_0, y_0, theta_0, name=name, team=team)
+
+    def behavior_hateWall(self,sensor_to_wall):
+        translation = sensor_to_wall[sensor_front]*0.5
+        rotation = (1-sensor_to_wall[sensor_front])*random()+(1-sensor_to_wall[sensor_front_right]) - (1-sensor_to_wall[sensor_front_left])
+        return translation, rotation
+    
+    def behavior_loveBot(self,sensor_to_robot):
+        translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) 
+        rotation = ((sensor_to_robot[sensor_front_right] - (sensor_to_robot[sensor_front_left]))) * 2.0 
+        return translation, rotation 
+    
+    def behavior_cruise(self):
+        return 1.0,0.0
 
     def step(self, sensors, sensor_view=None, sensor_robot=None, sensor_team=None):
 
@@ -44,9 +52,15 @@ class Robot_player(Robot):
                 print ("\ttype (0:empty, 1:wall, 2:robot) =",sensor_view)
                 print ("\trobot's name (if relevant)      =",sensor_robot)
                 print ("\trobot's team (if relevant)      =",sensor_team)
-        
-        translation = sensors[sensor_front]*0.7
-        rotation = (1-sensors[sensor_front])-(sensors[sensor_front_right]) + (sensors[sensor_front_left])
+
+        wall = sensor_to_wall[sensor_front] * sensor_to_wall[sensor_front_left] * sensor_to_wall[sensor_front_right]
+        robot = sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]
+        if wall < 0.5:
+            translation, rotation = self.behavior_hateWall(sensor_to_wall)
+        elif robot < 0.9:
+            translation, rotation = self.behavior_loveBot(sensor_to_robot)
+        else:
+            translation, rotation = self.behavior_cruise()
 
         self.iteration = self.iteration + 1        
         return translation, rotation, False
