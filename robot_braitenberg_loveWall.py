@@ -1,4 +1,3 @@
-
 from robot import * 
 
 nb_robots = 0
@@ -40,36 +39,9 @@ class Robot_player(Robot):
                 print ("\ttype (0:empty, 1:wall, 2:robot) =",sensor_view)
                 print ("\trobot's name (if relevant)      =",sensor_robot)
                 print ("\trobot's team (if relevant)      =",sensor_team)
-            
-        
 
-        force_gauche = (1.0 - sensor_to_robot[sensor_front_left]) + (1.0 - sensor_to_robot[sensor_left])
-        
-        # Calcul de l'attraction à DROITE
-        force_droite = (1.0 - sensor_to_robot[sensor_front_right]) + (1.0 - sensor_to_robot[sensor_right])
-
-        # 3. COMMANDE MOTEUR
-        
-        # ROTATION :
-        # Pour aller VERS la cible :
-        # Si force_gauche > force_droite -> On veut tourner à Gauche (Rotation positive)
-        # Si force_droite > force_gauche -> On veut tourner à Droite (Rotation négative)
-        rotation = (force_gauche - force_droite) * 2.0  # Le *2.0 rend le virage plus sec
-        
-        # TRANSLATION (Vitesse) :
-        # Comportement "Love" : on avance vite pour trouver l'ami, 
-        # mais on ralentit quand on est tout près pour ne pas (trop) le percuter.
-        min_dist = min(sensor_to_robot) # Distance de l'ami le plus proche
-        
-        if min_dist == 1.0:
-            # Personne en vue : on avance pour chercher
-            translation = 1.0
-            # Petite astuce : on peut ajouter une légère rotation aléatoire pour explorer si on est seul
-            rotation = 0.2 
-        else:
-            # Ami en vue : on avance proportionnellement à la distance
-            # Si loin (0.9) -> vite. Si proche (0.1) -> doucement.
-            translation = min_dist
+        translation = sensor_to_wall[sensor_front]*0.9
+        rotation = sensor_to_wall[sensor_front]*(random.choice([1, -1]) * 0.3) - sensor_to_wall[sensor_right] + sensor_to_wall[sensor_left]
 
         self.iteration = self.iteration + 1        
         return translation, rotation, False
