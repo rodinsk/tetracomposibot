@@ -40,8 +40,8 @@ class Robot_player(Robot):
                 print ("\trobot's name (if relevant)      =",sensor_robot)
                 print ("\trobot's team (if relevant)      =",sensor_team)
 
-        translation = sensor_to_wall[sensor_front]*0.9
-        rotation = sensor_to_wall[sensor_front]*(random.choice([1, -1]) * 0.3) - sensor_to_wall[sensor_right] + sensor_to_wall[sensor_left]
+        translation = sensor_to_wall[sensor_front]
+        rotation =  sensor_to_wall[sensor_front_right] - sensor_to_wall[sensor_front_left]
 
         self.iteration = self.iteration + 1        
         return translation, rotation, False
