@@ -1,6 +1,7 @@
 
 from robot import * 
-
+import random
+from random import random
 nb_robots = 0
 debug = True
 
@@ -42,7 +43,7 @@ class Robot_player(Robot):
                 print ("\trobot's team (if relevant)      =",sensor_team)
             
         translation = sensor_to_wall[sensor_front]*0.5 # A MODIFIER
-        rotation = (1-sensor_to_wall[sensor_front])*random()+(1-sensor_to_wall[sensor_front_right])*(1) - (1-sensor_to_wall[sensor_front_left])*(1) - sensor_to_wall[sensor_right]*0.15
+        rotation = (1-sensor_to_wall[sensor_front])*random()+(1-sensor_to_wall[sensor_front_right])*(1) - (1-sensor_to_wall[sensor_front_left])*(1) - sensor_to_wall[sensor_right]*0.15 + sensors[sensor_left]*0.15
 
         self.iteration = self.iteration + 1        
         return translation, rotation, False
