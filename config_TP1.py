@@ -8,6 +8,7 @@ display_mode = 0
 arena = 2
 position = False 
 max_iterations = 2000 #401*500
+max_iterations = 2001 #401*500
 
 # affichage
 
@@ -23,6 +24,8 @@ display_time_stats = True
 import robot_dumb
 import robot_braitenberg_avoider as robotavoider
 import robot_braitenberg_loveWall as robotlovewall
+import robot_braitenberg_avoider
+import robot_braitenberg_hateWall
 
 def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of the robot enclosed in a square
     #x_center = arena_size // 2 - particle_box / 2
@@ -30,4 +33,6 @@ def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of t
     robots = []
     robots.append(robotavoider.Robot_player(4, y_center, 0, name="Avoider", team="A"))
     robots.append(robotlovewall.Robot_player(80, y_center, 0, name="LoverWall", team="A"))
+    robots.append(robot_braitenberg_hateWall.Robot_player(4, y_center, 0, name="My Robot", team="A"))
+    robots.append(robot_braitenberg_hateWall.Robot_player(93, y_center, 90, name="My Robot", team="A"))
     return robots
