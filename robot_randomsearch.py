@@ -22,7 +22,9 @@ class Robot_player(Robot):
     y_0 = 0
     theta_0 = 0 # in [0,360]
 
-   
+    old_log_sum_of_translation = 0
+    old_log_sum_of_rotation = 0
+    score = 0
 
     def __init__(self, x_0, y_0, theta_0, name="n/a", team="n/a",evaluations=0,it_per_evaluation=0):
         global nb_robots
@@ -33,21 +35,14 @@ class Robot_player(Robot):
         self.theta_0 = theta_0
         self.param = [random.randint(-1, 1) for i in range(8)]
         self.it_per_evaluation = it_per_evaluation
-
-        #ex1
+        self.old_log_sum_of_translation = 0
+        self.old_log_sum_of_rotation = 0
         self.score = 0
-        self.old_x = x_0
-        self.old_y = y_0
-        self.old_theta = theta_0
 
         super().__init__(x_0, y_0, theta_0, name=name, team=team)
 
     def reset(self):
-        # ex1 
-        self.score = 0
-        self.old_x = self.x
-        self.old_y = self.y
-        self.old_theta = self.theta
+     
         super().reset()
 
     def step(self, sensors, sensor_view=None, sensor_robot=None, sensor_team=None):
@@ -58,17 +53,6 @@ class Robot_player(Robot):
         # - la fonction de controle est une combinaison linéaire des senseurs, pondérés par les paramètres (c'est un "Perceptron")
 
         # toutes les X itérations: le robot est remis à sa position initiale de l'arène avec une orientation aléatoire
-
-        # Translation effective 
-        dist_translation = math.sqrt((self.x - self.old_x)**2 + (self.y - self.old_y)**2)
-        # Rotation effective
-        dist_rotation = abs(self.theta - self.old_theta)
-        #score
-        self.score += dist_translation * (1 - dist_rotation)
-        #mise à jour
-        self.old_x = self.x
-        self.old_y = self.y
-        self.old_theta = self.theta
 
         if self.iteration % self.it_per_evaluation == 0:
                 if self.iteration > 0:
@@ -84,12 +68,14 @@ class Robot_player(Robot):
                         print ("\t>>> New best score! (Trial "+str(self.trial)+") <<<")
 
                 if self.trial < 500:
-                    # CAS 1 : On cherche encore (Essais 0 à 499)
+                    # CAS 1 
                     self.param = [random.randint(-1, 1) for i in range(8)]
+                    self.score = 0
                     print ("Starting trial no.", self.trial + 1)
                 
                 else:
-                    # CAS 2 : On a fini les 500 essais -> On joue le meilleur
+                    # CAS 2 
+                    
                     print ("xxx REPLAY BEST STRATEGY (found at trial", self.bestTrial, ") xxx")
                     print ("xxx Best Score was:", self.bestScore)
                     print ("xxx Best Params:", self.bestParam)
@@ -99,18 +85,26 @@ class Robot_player(Robot):
                 
                 self.trial = self.trial + 1
                 self.iteration = self.iteration + 1
-                return 0, 0, True # ask for reset
+                return 0, 0, True 
         
                 
                 #self.param = [random.randint(-1, 1) for i in range(8)]
                 #self.trial = self.trial + 1
                 #print ("Trying strategy no.",self.trial)
                 #self.iteration = self.iteration + 1
-                #return 0, 0, True # ask for reset
+                return 0, 0, True # ask for reset
 
         # fonction de contrôle (qui dépend des entrées sensorielles, et des paramètres)
         translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
         rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
+    
+        delta_translation = self.log_sum_of_translation - self.old_log_sum_of_translation
+        delta_rotation = self.log_sum_of_rotation - self.old_log_sum_of_rotation
+
+        self.score += delta_translation * (1 - abs(delta_rotation))
+
+        self.old_log_sum_of_translation = self.log_sum_of_translation
+        self.old_log_sum_of_rotation = self.log_sum_of_rotation
 
         if debug == True:
             if self.iteration % 100 == 0:
