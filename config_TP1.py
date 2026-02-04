@@ -8,7 +8,6 @@ display_mode = 0
 arena = 1
 position = False 
 max_iterations = 2000 #401*500
-max_iterations = 2001 #401*500
 
 # affichage
 

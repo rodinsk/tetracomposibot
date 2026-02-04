@@ -30,6 +30,7 @@ plt.plot(iter_rand3, score_rand3, color="orange")
 plt.plot(iter_rand4, score_rand4, color="orange")
 plt.plot(iter_rand5, score_rand5, color="orange")
 
+
 plt.plot(iter_gen, score_gen, label="Algorithme Génétique ", color="purple")
 plt.plot(iter_gen2, score_gen2, color="purple")
 plt.plot(iter_gen3, score_gen3, color="purple")

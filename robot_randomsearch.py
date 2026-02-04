@@ -62,13 +62,6 @@ class Robot_player(Robot):
 
         # toutes les X itérations: le robot est remis à sa position initiale de l'arène avec une orientation aléatoire
         
-        delta_translation = self.log_sum_of_translation - self.old_log_sum_of_translation
-        delta_rotation = abs(self.log_sum_of_rotation - self.old_log_sum_of_rotation)
-
-        self.score += delta_translation * (1 - delta_rotation)
-
-        self.old_log_sum_of_translation = self.log_sum_of_translation
-        self.old_log_sum_of_rotation = self.log_sum_of_rotation
     
         if self.iteration % self.it_per_evaluation == 0:
                 if self.trial < 500:
