@@ -24,6 +24,7 @@ import robot_challenger
 import robot_champion
 import robot_subsomption
 import robot_braitenberg_avoider
+import robot_test_projet
 
 def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of the robot enclosed in a square
     global position
