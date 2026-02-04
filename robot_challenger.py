@@ -8,12 +8,13 @@
 # all sensor and motor value are normalized (from 0.0 to 1.0 for sensors, -1.0 to +1.0 for motors)
 
 from robot import * 
+import random
 
 nb_robots = 0
 
 class Robot_player(Robot):
 
-    team_name = "Challenger"  # vous pouvez modifier le nom de votre équipe
+    team_name = "Fraise framboise myrtille"  # vous pouvez modifier le nom de votre équipe
     robot_id = -1             # ne pas modifier. Permet de connaitre le numéro de votre robot.
     memory = 0                # vous n'avez le droit qu'a une case mémoire qui doit être obligatoirement un entier
 
@@ -26,5 +27,57 @@ class Robot_player(Robot):
     def step(self, sensors, sensor_view=None, sensor_robot=None, sensor_team=None):
         translation = sensors[sensor_front]
         rotation = 1.0 * sensors[sensor_front_left] - 1.0 * sensors[sensor_front_right] + (random.random()-0.5)*0.1
+        sensor_to_wall = []
+        sensor_to_robot = []
+        sensor_to_team = []
+
+
+        
+
+
+        for i in range (0,8):
+            if  sensor_view[i] == 1:
+                sensor_to_wall.append( sensors[i] )
+                sensor_to_robot.append(1.0)
+                sensor_to_team.append(1.0)
+            elif  sensor_view[i] == 2:
+                sensor_to_wall.append( 1.0 )
+                sensor_to_robot.append( sensors[i])
+                if sensor_team[i] == self.team_name:
+                    sensor_to_team.append(sensors[i])
+                else:
+                    sensor_to_team.append(1.0)
+            else:
+                sensor_to_wall.append(1.0)
+                sensor_to_robot.append(1.0)
+                sensor_to_team.append(1.0)
+
+        wall = sensor_to_wall[sensor_front] * sensor_to_wall[sensor_front_left] * sensor_to_wall[sensor_front_right]
+        robot = sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]
+        team = sensor_to_team[sensor_front] * sensor_to_team[sensor_front_left] * sensor_to_team[sensor_front_right]
+
+        
+        print("\tIDDD : ", self.robot_id)
+        print("Team : ", team)
+        print("Robot : ", robot)
+
+        if wall  < 0.15:
+            translation = -1
+            rotation = random.random() * 2.0 - 1.0 
+        if wall < 0.5 :
+            translation = sensor_to_wall[sensor_front]*0.5
+            rotation = (1-sensor_to_wall[sensor_front])*random.random()+(1-sensor_to_wall[sensor_front_right]) - (1-sensor_to_wall[sensor_front_left])
+       
+        elif team < 0.9:
+            translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
+            rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
+
+        elif robot < 0.9:
+            translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) 
+            rotation = ((sensor_to_robot[sensor_front_right] - (sensor_to_robot[sensor_front_left]))) * 2.0 
+        else:
+            translation = 0.9
+            rotation = 0.0 + random.random()* 1.1 - random.random() * 1.1
+
         return translation, rotation, False
 
