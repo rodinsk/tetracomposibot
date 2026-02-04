@@ -1,4 +1,3 @@
-
 from robot import * 
 import math
 
@@ -16,15 +15,18 @@ class Robot_player(Robot):
     it_per_evaluation = 400
     trial = 0
 
-    bestScore = -100000 ; # ex1
+    
 
     x_0 = 0
     y_0 = 0
     theta_0 = 0 # in [0,360]
 
+    # Nouvelles variables
     old_log_sum_of_translation = 0
     old_log_sum_of_rotation = 0
     score = 0
+
+    bestScore = -100000 ; # ex1
 
     def __init__(self, x_0, y_0, theta_0, name="n/a", team="n/a",evaluations=0,it_per_evaluation=0):
         global nb_robots
@@ -80,36 +82,40 @@ class Robot_player(Robot):
                         self.bestParam = self.param[:] 
                         self.bestTrial = self.trial   
                         print ("\t>>> New best score! (Trial "+str(self.trial)+") <<<")
-                    self.param = [random.randint(-1, 1) for i in range(8)] 
+
+                if self.trial < 500:
+                    # CAS 1 
+                    self.param = [random.randint(-1, 1) for i in range(8)]
                     self.score = 0
-                    print ("Starting trial no.", self.trial + 1)
+                    print ("Starting trial / ", self.trial + 1)
+                    self.trial = self.trial + 1
                 
                 else:
-                    #si plus que 500 essais, on rejoue la meilleure stratégie
-                    print ("\n" )
+                    # CAS 2 
+                    
                     print ("xxx REPLAY BEST STRATEGY (found at trial", self.bestTrial, ") xxx")
                     print ("xxx Best Score was:", self.bestScore)
                     print ("xxx Best Params:", self.bestParam)
                     
-                    self.score = 0
                     self.param = self.bestParam[:] # On remet les paramètres du champion
                     self.it_per_evaluation = 1000  # On passe à 1000 itérations comme demandé
                 
-                self.trial = self.trial + 1
+                
                 self.iteration = self.iteration + 1
-                return 0, 0, True 
+                return 0, 0, True #Reset
         
                 
-                #self.param = [random.randint(-1, 1) for i in range(8)]
-                #self.trial = self.trial + 1
-                #print ("Trying strategy no.",self.trial)
-                #self.iteration = self.iteration + 1
-                return 0, 0, True # ask for reset
-
         # fonction de contrôle (qui dépend des entrées sensorielles, et des paramètres)
         translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
         rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
     
+        delta_translation = self.log_sum_of_translation - self.old_log_sum_of_translation
+        delta_rotation = self.log_sum_of_rotation - self.old_log_sum_of_rotation
+
+        self.score += delta_translation * (1 - abs(delta_rotation))
+
+        self.old_log_sum_of_translation = self.log_sum_of_translation
+        self.old_log_sum_of_rotation = self.log_sum_of_rotation
 
         if debug == True:
             if self.iteration % 100 == 0:
