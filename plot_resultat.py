@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import resultat_test
 
 def read_data(filename):
     iterations = []
@@ -12,8 +13,8 @@ def read_data(filename):
     return iterations, best_scores
 
 
-iter_rand, score_rand = read_data("resultat_random_1.txt") 
-iter_gen, score_gen = read_data("resultat_algo_1.txt")
+iter_rand, score_rand = read_data("resultat_test/resultat_random_1.txt") 
+iter_gen, score_gen = read_data("resultat_test/resultat_algo_1.txt")
 
 plt.plot(iter_rand, score_rand, label="Recherche Aléatoire", color="blue")
 plt.plot(iter_gen, score_gen, label="Algorithme Génétique", color="red")
