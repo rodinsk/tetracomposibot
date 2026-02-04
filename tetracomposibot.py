@@ -43,7 +43,7 @@ welcome_message = "Tetracomposibot, a simple robot simulator.\n\tSimulate single
 ### 0. Experimental setup ###
 #############################
 
-max_iterations = 5001 # nb of iterations (default - might be modified later)
+max_iterations = 100000 # nb of iterations (default - might be modified later)
 
 absolute_orientation = 0  # -90  # in degrees
 translation_per_step = 1.0  # in [0,1]
@@ -55,7 +55,7 @@ arena_size = 100
 sensor_length = 10
 nb_sensors = 8
 
-display_fps = 10 # default
+display_fps = 10 # default = 10
 
 display_occupancy = True  # Set to True to display visited cells as a background layer.
 display_occupancy_alpha = 0.8  # Transparency: from 0 (transparent) to 1 (opaque).
@@ -709,7 +709,7 @@ if args.position != "n/a":
 if args.display_mode != -1:
     config.display_mode = args.display_mode
 if args.max_iterations != -1:
-    config.max_iterations = args.display_mode
+    config.max_iterations = args.max_iterations # probleme avanr ct args.dsiplay_mode
 
 arena_size = 100
 max_translation_per_step = 1.0
