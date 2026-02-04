@@ -41,7 +41,7 @@ class Robot_player(Robot):
     is_first_generation = True
 
     generation = 0
-    max_generation = 100
+    max_generation = 500
 
     def __init__(self, x_0, y_0, theta_0, name="n/a", team="n/a",evaluations=0,it_per_evaluation=0):
         global nb_robots
@@ -96,11 +96,6 @@ class Robot_player(Robot):
                     self.iteration =0
                     return 0, 0, True
                 else :
-                    print("Génération  ", self.generation, " : ", self.total_score)
-                    print ("\tparameters           =",self.param)
-                    print ("\ttranslations         =",self.log_sum_of_translation,"; rotations =",self.log_sum_of_rotation) # *effective* translation/rotation (ie. measured from displacement)
-                    print ("\tdistance from origin =",math.sqrt((self.x-self.x_0)**2+(self.y-self.y_0)**2))
-                    print ("\tscore                =",self.score)
 
                     #Premier parent
                     if self.is_first_generation:
@@ -114,8 +109,9 @@ class Robot_player(Robot):
                             # Nouveau parent
                             self.parentParam = self.param[:]
                             self.parentScore = self.total_score
-                            print ("||| New parent : ", self.parentScore, " |||")
                     
+                    print(f"{self.generation},{self.total_score:.2f},{self.parentScore:.2f}")
+
                     if self.generation < self.max_generation:
                         #Prochaine génération
                         self.param = self.parentParam[:]  
@@ -128,9 +124,7 @@ class Robot_player(Robot):
 
     
                     else:
-                        print ("||| End : ")
-                        print ("Best score :", self.parentScore)
-                        print ("Best parameters:", self.parentParam)
+                        
                         #Avec le meilleur individu
                         self.param = self.parentParam[:]
                         self.it_per_evaluation = 1000  # On passe à 1000 itérations
