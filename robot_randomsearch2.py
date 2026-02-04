@@ -23,7 +23,7 @@ class Robot_player(Robot):
     theta_0 = 0 # in [0,360]
 
     # Nouvelles variables
-    max_strategies = 500;
+    max_strategies = 500
 
     old_log_sum_of_translation = 0
     old_log_sum_of_rotation = 0
