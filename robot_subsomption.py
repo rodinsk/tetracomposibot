@@ -7,7 +7,6 @@ debug = True
 
 class Robot_player(Robot):
 
-    team_name = "Dumb"
     robot_id = -1
     iteration = 0
 
@@ -47,8 +46,9 @@ class Robot_player(Robot):
         #else:
             #rotation = -1.0 
         translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
-        rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
-        #rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right]) * 3.0 + 0.2
+        #rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0  + (sensor_to_robot[sensor_front] == 1.0) * -0.25 * random.random()
+        rotation = rotation = 0.2 * sensor_to_robot[sensor_left] + 0.2 * sensor_to_robot[sensor_front_left] - 0.2 * sensor_to_robot[sensor_right] - 0.2 * sensor_to_robot[sensor_front_right] + (random.random()-0.5)*1
+        #rotation = (1-sensor_to_robot[sensor_front])*random.random() * random.choice([-1,1])
         return translation, rotation
     
     def behavior_cruise(self):
@@ -85,7 +85,7 @@ class Robot_player(Robot):
             elif  sensor_view[i] == 2:
                 sensor_to_wall.append( 1.0 )
                 sensor_to_robot.append( sensors[i] )
-                if sensor_team[i] == self.team_name:
+                if sensor_team[i] == self.team:
                     sensor_to_team.append( sensors[i] )
                     sensor_to_ennemi.append(1.0)
                 else:
@@ -99,7 +99,7 @@ class Robot_player(Robot):
 
         if debug == True:
             if self.iteration % 100 == 0:
-                print ("Robot",self.robot_id," (team "+str(self.team_name)+")","at step",self.iteration,":")
+                print ("Robot",self.robot_id," (team "+str(self.team)+")","at step",self.iteration,":")
                 print ("\tsensors (distance, max is 1.0)  =",sensors)
                 print ("\t\tsensors to wall  =",sensor_to_wall)
                 #print ("\t\tsensors to robot =",sensor_to_robot)
@@ -117,7 +117,8 @@ class Robot_player(Robot):
         if wall < 0.5:
             translation, rotation = self.behavior_hateWall(sensor_to_wall)
          
-        elif sensor_team[sensor_front] == "A" or sensor_team[sensor_left] == "A" or sensor_team[sensor_front_left] == "A" or sensor_team[sensor_right] == "A" or sensor_team[sensor_front_right] == "A" or sensor_team[sensor_rear] == "A" or sensor_team[sensor_rear_left] == "A" or sensor_team[sensor_rear_right] == "A" and robot < 0.8 :
+         
+        elif self.team == sensor_robot[sensor_front] or self.team == sensor_robot[sensor_front_left] or self.team == sensor_robot[sensor_front_right] or self.team == sensor_robot[sensor_rear]or self.team == sensor_robot[sensor_left] or self.team == sensor_robot[sensor_right]:
             translation, rotation = self.behavior_hateBot(sensor_to_team)
        
         elif ennemi < 1.0 :
