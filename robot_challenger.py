@@ -55,10 +55,6 @@ class Robot_player(Robot):
         robot = sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]
         team = sensor_to_team[sensor_front] * sensor_to_team[sensor_front_left] * sensor_to_team[sensor_front_right]
 
-        
-        print("\tIDDD : ", self.robot_id)
-        print("Team : ", team)
-        print("Robot : ", robot)
 
         # Robot qui fait tout (pour l'instant)
         if(self.robot_id == 0):
@@ -89,7 +85,7 @@ class Robot_player(Robot):
                 translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
                 rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
             else:
-                translation = 1
+                translation = 0.7
                 rotation = (random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.8 - (sensors[sensor_front_right]) *0.6 + (sensors[sensor_front_left]) *0.6  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5
         # Robot qui suit les ennemis
         elif self.robot_id == 2:

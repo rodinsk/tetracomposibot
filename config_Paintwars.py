@@ -6,7 +6,7 @@ import  robot_wanderer
 # general -- first three parameters can be overwritten with command-line arguments (cf. "python tetracomposibot.py --help")
 
 display_mode = 0
-arena = 2
+arena = 3
 position = False 
 max_iterations = 2001 #401*500
 
@@ -24,6 +24,7 @@ display_time_stats = False
 import robot_challenger
 import robot_champion
 import robot_subsomption
+import robot_braitenberg_avoider
 
 def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of the robot enclosed in a square
     global position
@@ -42,6 +43,5 @@ def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of t
     for i in range(4):
         robots.append(robot_challenger.Robot_player(x_init_pos[0], arena_size//2-16+i*8, orientation_champion, name="", team="A"))
     for i in range(4):
-        robots.append(robot_champion.Robot_player(x_init_pos[1], arena_size//2-16+i*8, orientation_challenger, name="", team="B"))
-        #robots.append(robot_wanderer.Robot_player(x_init_pos[1], arena_size//2-16+i*8, orientation_challenger, name="", team="B"))
+        robots.append(robot_braitenberg_avoider.Robot_player(x_init_pos[1], arena_size//2-16+i*8, orientation_challenger, name="", team="B"))
     return robots
