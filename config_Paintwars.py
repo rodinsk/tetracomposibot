@@ -25,6 +25,7 @@ import robot_champion
 import robot_subsomption
 import robot_braitenberg_avoider
 import robot_test_projet
+import robot_test
 
 def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of the robot enclosed in a square
     global position
@@ -41,7 +42,7 @@ def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of t
         orientation_challenger = 0
     robots = []
     for i in range(4):
-        robots.append(robot_subsomption.Robot_player(x_init_pos[0], arena_size//2-16+i*8, orientation_champion, name="", team="A"))
+        robots.append(robot_challenger.Robot_player(x_init_pos[0], arena_size//2-16+i*8, orientation_champion, name="", team="A"))
     for i in range(4):
         robots.append(robot_test_projet.Robot_player(x_init_pos[1], arena_size//2-16+i*8, orientation_challenger, name="", team="B"))
     return robots
