@@ -32,23 +32,23 @@ class Robot_player(Robot):
     
     def behavior_loveBot(self,sensor_to_robot):
         
-        translation = 1.0
+        translation = 0.8
         #translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) 
         rotation = ((sensor_to_robot[sensor_front_right] - (sensor_to_robot[sensor_front_left]))) * 2.0 
         return translation, rotation 
     
     def behavior_hateBot(self,  sensor_to_robot):
             
-        #translation = -1.0  
+        # translation = -1.0  
         
-        #if self.robot_id % 2 == 0:
-            #rotation = 1.0 
-        #else:
-            #rotation = -1.0 
+        # if self.robot_id % 2 == 0:
+        #     rotation = 1.0 
+        # else:
+        #     rotation = -1.0 
         translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
         #rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0  + (sensor_to_robot[sensor_front] == 1.0) * -0.25 * random.random()
         rotation = rotation = 0.2 * sensor_to_robot[sensor_left] + 0.2 * sensor_to_robot[sensor_front_left] - 0.2 * sensor_to_robot[sensor_right] - 0.2 * sensor_to_robot[sensor_front_right] + (random.random()-0.5)*1
-        #rotation = (1-sensor_to_robot[sensor_front])*random.random() * random.choice([-1,1])
+        #rotation = (1-sensor_to_robot[sensor_front])*random.random() * random.choice([-1,1]) + (1-sensor_to_robot[sensor_front_left])*random.random() * random.choice([-1,1]) + (1-sensor_to_robot[sensor_front_right])*random.random() * random.choice([-1,1])
         return translation, rotation
     
     def behavior_cruise(self):
@@ -114,11 +114,15 @@ class Robot_player(Robot):
 
         
         
+       
+         
+         
+       
+
         if wall < 0.5:
             translation, rotation = self.behavior_hateWall(sensor_to_wall)
-         
-         
-        elif self.team == sensor_robot[sensor_front] or self.team == sensor_robot[sensor_front_left] or self.team == sensor_robot[sensor_front_right] or self.team == sensor_robot[sensor_rear]or self.team == sensor_robot[sensor_left] or self.team == sensor_robot[sensor_right]:
+
+        elif self.team == sensor_to_robot[sensor_front] or self.team == sensor_to_robot[sensor_front_left] or self.team == sensor_to_robot[sensor_front_right] or self.team == sensor_to_robot[sensor_rear]or self.team == sensor_to_robot[sensor_left] or self.team == sensor_to_robot[sensor_right]:
             translation, rotation = self.behavior_hateBot(sensor_to_team)
        
         elif ennemi < 1.0 :

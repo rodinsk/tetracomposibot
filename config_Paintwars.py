@@ -43,5 +43,5 @@ def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of t
     for i in range(4):
         robots.append(robot_subsomption.Robot_player(x_init_pos[0], arena_size//2-16+i*8, orientation_champion, name="", team="A"))
     for i in range(4):
-        robots.append(robot_champion.Robot_player(x_init_pos[1], arena_size//2-16+i*8, orientation_challenger, name="", team="B"))
+        robots.append(robot_test_projet.Robot_player(x_init_pos[1], arena_size//2-16+i*8, orientation_challenger, name="", team="B"))
     return robots
