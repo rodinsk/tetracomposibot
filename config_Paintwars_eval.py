@@ -1,12 +1,11 @@
 # Configuration file.
 
-import arenas
-import  robot_wanderer
+import arenas_eval as arenas
 
 # general -- first three parameters can be overwritten with command-line arguments (cf. "python tetracomposibot.py --help")
 
 display_mode = 0
-arena = 3
+arena = 1
 position = False 
 max_iterations = 2001 #401*500
 
@@ -23,8 +22,6 @@ display_time_stats = False
 
 import robot_challenger
 import robot_champion
-import robot_subsomption
-import robot_braitenberg_avoider
 
 def initialize_robots(arena_size=-1, particle_box=-1): # particle_box: size of the robot enclosed in a square
     global position

@@ -1,8 +1,8 @@
 # Projet "robotique" IA&Jeux 2025
 #
 # Binome:
-#  Prénom Nom No_étudiant/e : _________
-#  Prénom Nom No_étudiant/e : _________
+#  Prénom Nom No_étudiant/e : NSIKU TOMONO Rodi
+#  Prénom Nom No_étudiant/e : HUANG Hongshuo
 #
 # check robot.py for sensor naming convention
 # all sensor and motor value are normalized (from 0.0 to 1.0 for sensors, -1.0 to +1.0 for motors)
@@ -119,8 +119,8 @@ class Robot_player(Robot):
         """
         #Robot champion amélioré
         if self.robot_id == 0:
-            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and  self.memory!= 0:
-                translation = -0.7
+            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and abs(self.memory - 1.0)  > 0.05:
+                translation = -1
                 rotation = random.random() * 2.0 - 1
             else: 
                 translation = 0.8
@@ -128,24 +128,24 @@ class Robot_player(Robot):
         #Robot qui évite tout
         elif self.robot_id == 1:
             
-            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and  self.memory!= 0:
-                translation = -0.7
+            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 or sensors[sensor_front] < 0.05 and abs(self.memory - 1.0)  > 0.05:
+                translation = -1
                 rotation = random.random() * 2.0 - 1
             elif robot < 0.9:
                 translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
                 rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
             elif wall < 0.5 :
-                translation = sensor_to_wall[sensor_front]*0.4 
+                translation = sensor_to_wall[sensor_front]*0.5 
                 rotation = ((random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.7 - (sensors[sensor_front_right]) *0.6 + (sensors[sensor_front_left]) *0.6  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5 + (sensors[sensor_rear_left]) * 0.5 - (sensors[sensor_rear_right]) * 0.5 ) * 0.3
-            
             else:
-                translation = 0.7
+                translation = 1
                 rotation = (random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.8 - (sensors[sensor_front_right]) *0.6 + (sensors[sensor_front_left]) *0.6  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5
         # Robot qui suit les ennemis
         elif self.robot_id == 2:
-            print(self.memory - sensors[sensor_front])
-            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05:
-                translation = -0.8
+            #print(self.memory - sensors[sensor_front])
+            if random.random() < 0.15 and abs(self.memory - sensors[sensor_front]) < 0.1 and abs(self.memory - 1.0)  > 0.05 :
+                
+                translation = random.random() * 2.0 - 1
                 rotation = random.random() * 2.0 - 1
             elif team < 0.9 : 
                 translation, rotation = self.behavior_hateBot(sensor_to_team)
@@ -160,11 +160,14 @@ class Robot_player(Robot):
         #Algo génétique
         elif self.robot_id == 3:
 
-            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and  self.memory!= 0:
+            if random.random() < 0.05 and abs(self.memory - sensors[sensor_front]) < 0.05 and abs(self.memory - 1.0)  > 0.05:
                 translation = -0.7
                 rotation = random.random() * 2.0 - 1
+            elif random.random() < 0.2:
+                translation = random.choice([1, -1])
+                rotation = random.random() * 2.0 - 1
             else:
-                self.param= [-1, -1, 1, -1, 0, 1, 1, 0]
+                self.param= [1, 0, 1, 1, 1, 1, -1, -1]
                 translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
                 rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
         
