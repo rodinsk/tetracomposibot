@@ -41,7 +41,7 @@ class Robot_player(Robot):
     is_first_generation = True
 
     generation = 0
-    max_generation = 100
+    max_generation = 300
 
     def __init__(self, x_0, y_0, theta_0, name="n/a", team="n/a",evaluations=0,it_per_evaluation=0):
         global nb_robots

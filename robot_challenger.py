@@ -123,10 +123,10 @@ class Robot_player(Robot):
                 translation = sensor_to_wall[sensor_front]*0.5
                 rotation = (1-sensor_to_wall[sensor_front])*random.random()+(1-sensor_to_wall[sensor_front_right]) - (1-sensor_to_wall[sensor_front_left])
         
-            elif robot < 1.0 :
+            elif ennemi < 1.0 :
                 translation = 1.0
                 #translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) 
-                rotation = ((sensor_to_robot[sensor_front_right] - (sensor_to_robot[sensor_front_left]))) * 2.0 
+                rotation = ((sensor_to_ennemi[sensor_front_right] - (sensor_to_ennemi[sensor_front_left]))) * 2.0 
             else:
                 translation = 1.0
                 #rotation = (random.random()-0.5)*0.5
@@ -138,10 +138,10 @@ class Robot_player(Robot):
                 translation = -0.7
                 rotation = random.random() * 2.0 - 1
             else:
-                self.param= [-1, -1, 1, -1, 0, 1, 1, 0]
+                self.param= [0, 1, -1, 1, -1, 1, 0, 0]
                 translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
                 rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
-        
+
         self.memory = sensors[sensor_front]
 
         return translation, rotation, False
