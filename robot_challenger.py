@@ -114,16 +114,17 @@ class Robot_player(Robot):
             if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05:
                 translation = -0.8
                 rotation = random.random() * 2.0 - 1
+
+            elif wall < 0.5:
+                translation = sensor_to_wall[sensor_front]*0.5
+                rotation = (1-sensor_to_wall[sensor_front])*random.random()+(1-sensor_to_wall[sensor_front_right]) - (1-sensor_to_wall[sensor_front_left])
+        
             elif team < 0.9 : 
                 translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
                 #rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0  + (sensor_to_robot[sensor_front] == 1.0) * -0.25 * random.random()
                 rotation = rotation = 0.2 * sensor_to_robot[sensor_left] + 0.2 * sensor_to_robot[sensor_front_left] - 0.2 * sensor_to_robot[sensor_right] - 0.2 * sensor_to_robot[sensor_front_right] + (random.random()-0.5)*1
             
-            elif wall < 0.5:
-                translation = sensor_to_wall[sensor_front]*0.5
-                rotation = (1-sensor_to_wall[sensor_front])*random.random()+(1-sensor_to_wall[sensor_front_right]) - (1-sensor_to_wall[sensor_front_left])
-        
-            elif ennemi < 1.0 :
+            elif ennemi < 0.9 :
                 translation = 1.0
                 #translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) 
                 rotation = ((sensor_to_ennemi[sensor_front_right] - (sensor_to_ennemi[sensor_front_left]))) * 2.0 
@@ -133,15 +134,19 @@ class Robot_player(Robot):
                 rotation =  (random.random()-0.5)*0.5
         #Algo génétique
         elif self.robot_id == 3:
-
-            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and  self.memory!= 0:
-                translation = -0.7
+            if random.random() < 0.05 and abs(self.memory - sensors[sensor_front]) < 0.05 and abs(self.memory - 1.0)  > 0.05:
+                translation = -1
+                rotation = random.random() * 2.0 - 1
+            elif robot < 0.9:
+                translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.8
+                rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
+            elif random.random() < 0.1:
+                translation = 1
                 rotation = random.random() * 2.0 - 1
             else:
-                self.param= [0, 1, -1, 1, -1, 1, 0, 0]
+                self.param= [1, 0, 1, 1, 1, 1, -1, -1]
                 translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
                 rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
-
         self.memory = sensors[sensor_front]
 
         return translation, rotation, False

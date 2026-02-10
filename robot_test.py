@@ -90,48 +90,72 @@ class Robot_player(Robot):
                 translation = -0.7
                 rotation = random.random() * 2.0 - 1
             else: 
-                translation = 0.8
+                translation = 1.0
                 rotation = 0.2 * sensors[sensor_left] + 0.2 * sensors[sensor_front_left] - 0.2 * sensors[sensor_right] - 0.2 * sensors[sensor_front_right] + (random.random()-0.5)*1. #+ sensors[sensor_front] * 0.1
         #Robot qui évite tout
+        # === ROBOT 1 : LE FANTÔME (Vitesse Max + Évitement Total) ===
         elif self.robot_id == 1:
             
-            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and  self.memory!= 0:
-                translation = -0.7
+            if random.random() < 0.1 and abs(self.memory - sensors[sensor_front]) < 0.05 and self.memory != 0:
+                translation = -1.0 # Recule à fond (-0.7 -> -1.0)
                 rotation = random.random() * 2.0 - 1
-            elif robot < 0.9:
-                translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
-                rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
-            elif wall < 0.5 :
-                translation = sensor_to_wall[sensor_front]*0.4 
-                rotation = ((random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.7 - (sensors[sensor_front_right]) *0.6 + (sensors[sensor_front_left]) *0.6  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5 + (sensors[sensor_rear_left]) * 0.5 - (sensors[sensor_rear_right]) * 0.5 ) * 0.3
             
+            # Évitement Robot
+            elif robot < 0.9:
+                # Vitesse augmentée (* 0.7 -> * 1.0)
+                translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) * 1.0
+                # Rotation plus forte (* 2.0 -> * 3.0)
+                rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right]) * 3.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.5
+            
+            # Évitement Mur
+            elif wall < 0.5 :
+                # Vitesse augmentée (* 0.4 -> * 1.0)
+                translation = sensor_to_wall[sensor_front] * 1.0 
+                # J'ai gardé ta longue formule mais changé le multiplicateur final (* 0.3 -> * 1.5)
+                # C'est ça qui l'empêchait de tourner assez vite !
+                rotation = ((random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.5 - (sensors[sensor_front_right]) * 0.9 + (sensors[sensor_front_left]) * 0.9  + (sensors[sensor_left]) * 0.8 - (sensors[sensor_right]) * 0.8 + (sensors[sensor_rear_left]) * 0.2 - (sensors[sensor_rear_right]) * 0.2 ) * 1.5
+            
+            # Croisière (Pas d'obstacle)
             else:
-                translation = 0.7
-                rotation = (random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.8 - (sensors[sensor_front_right]) *0.6 + (sensors[sensor_front_left]) *0.6  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5
+                translation = 1.0 # Vitesse max (0.7 -> 1.0)
+                # Rotation plus stable pour aller tout droit mais éviter les bords
+                rotation = (random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.5 - (sensors[sensor_front_right]) * 0.8 + (sensors[sensor_front_left]) * 0.8  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5
         # Robot qui suit les ennemis
         elif self.robot_id == 2:
-            if wall < 0.4: # Mur
-                translation = 0.2
-                rotation = (sensor_to_wall[sensor_front_left] - sensor_to_wall[sensor_front_right]) * 3.0
-            elif team  < 0.6: # Ami
-                translation = 0.0
-                rotation = 1.0
-            elif ennemi  < 1.0: # Ennemi
-                translation = 1.0
-                rotation = (sensor_to_ennemi[sensor_front_right] - sensor_to_ennemi[sensor_front_left]) * 2.5
-            else: # Patrouille
-                translation = 1.0
-                rotation = (random.random() - 0.5) * 0.5
+            print(self.memory - sensors[sensor_front])
+            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05:
+                translation = -0.8
+                rotation = random.random() * 2.0 - 1
+            
+            if sensors[sensor_front] < 0.15 or sensors[sensor_front_left] < 0.15 or sensors[sensor_front_right] < 0.15:
+                self.memory = 10 # On va reculer pendant 10 steps
+                return 0, 0, False
+
+            translation = 1.0
+            rotation = 0
+            # Si on voit un robot (View == 2) et que ce n'est pas mon équipe
+            for i in range(8):
+                if sensor_view[i] == 2 and sensor_team[i] != self.team_name:
+                    # On fonce dessus (simple Braitenberg Love)
+                    # Si c'est à droite (i > 3), on tourne à droite
+                    if i > 3: rotation = 1.0
+                    else: rotation = -1.0
+                    break
         #Algo génétique
         elif self.robot_id == 3:
-            if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and  self.memory!= 0:
-                translation = -0.7
+            if random.random() < 0.05 and abs(self.memory - sensors[sensor_front]) < 0.05 and abs(self.memory - 1.0)  > 0.05:
+                translation = -1
+                rotation = random.random() * 2.0 - 1
+            elif robot < 0.9:
+                translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.8
+                rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
+            elif random.random() < 0.1:
+                translation = 1
                 rotation = random.random() * 2.0 - 1
             else:
-                self.param= [0, 1, -1, 1, -1, 1, 0, 0]
+                self.param= [1, 0, 1, 1, 1, 1, -1, -1]
                 translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
                 rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
-
         self.memory = sensors[sensor_front]
 
         return translation, rotation, False
