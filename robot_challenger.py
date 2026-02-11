@@ -39,12 +39,7 @@ class Robot_player(Robot):
     
     def behavior_hateBot(self,  sensor_to_robot):
             
-        #translation = -1.0  
-        
-        #if self.robot_id % 2 == 0:
-            #rotation = 1.0 
-        #else:
-            #rotation = -1.0 
+       
         translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.7
         #rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0  + (sensor_to_robot[sensor_front] == 1.0) * -0.25 * random.random()
         rotation = rotation = 0.2 * sensor_to_robot[sensor_left] + 0.2 * sensor_to_robot[sensor_front_left] - 0.2 * sensor_to_robot[sensor_right] - 0.2 * sensor_to_robot[sensor_front_right] + (random.random()-0.5)*1
@@ -66,7 +61,6 @@ class Robot_player(Robot):
         sensor_to_robot = []
         sensor_to_team = []
         sensor_to_ennemi = []
-
 
 
         for i in range (0,8):
@@ -92,8 +86,8 @@ class Robot_player(Robot):
                 sensor_to_ennemi.append(1.0)
 
         
-        wall = sensor_to_wall[sensor_front] * sensor_to_wall[sensor_front_left] * sensor_to_wall[sensor_front_right]
-        robot = sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]
+        wall = sensor_to_wall[sensor_front] * sensor_to_wall[sensor_front_left] * sensor_to_wall[sensor_front_right] * sensor_to_wall[sensor_left] * sensor_to_wall[sensor_right]
+        robot = sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right] *sensor_to_robot[sensor_left] * sensor_to_robot[sensor_right] * sensor_to_robot[sensor_rear_left] * sensor_to_robot[sensor_rear_right]
         team = sensor_to_team[sensor_front] * sensor_to_team[sensor_front_left] * sensor_to_team[sensor_front_right]
         ennemi = sensor_to_ennemi[sensor_front] * sensor_to_ennemi[sensor_front_left] * sensor_to_ennemi[sensor_front_right]
 
@@ -121,35 +115,35 @@ class Robot_player(Robot):
         #Robot champion amélioré
         if self.robot_id == 0:
             if random.random() < 0.005 and abs(self.memory - sensors[sensor_front]) < 0.05 and abs(self.memory - 1.0)  > 0.05:
-                translation = -1
+                translation = -0.5
                 rotation = random.random() * 2.0 - 1
             else: 
-                translation = 1
+                translation = sensors[sensor_front]*0.1+0.7
                 rotation = 0.2 * sensors[sensor_left] + 0.2 * sensors[sensor_front_left] - 0.2 * sensors[sensor_right] - 0.2 * sensors[sensor_front_right] + (random.random()-0.5)*1. #+ sensors[sensor_front] * 0.1
         #Robot qui évite tout
-        elif self.robot_id == 2:
+        elif self.robot_id == 1:
+            if random.random() < 0.1 and ( abs(self.memory - sensors[sensor_front]) < 0.05 or wall < 0.1 ) :
+                translation = -0.25
+                rotation = random.choice([-0.5, 0, 0.5])
             
-            if random.random() < 0.01 and abs(self.memory - sensors[sensor_front]) < 0.06 or sensors[sensor_front] < 0.05 and abs(self.memory - 1.0)  > 0.05:
-                translation = -1
-                rotation = random.choice([-1, -0.75, -0.5, 0, 0.5, 1])
-                
-                
             elif robot < 0.9:
-                translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.8
-                rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right])*2.0 + (sensor_to_robot[sensor_front] == 1.0) * -0.25
+                translation = (sensor_to_robot[sensor_front] * sensor_to_robot[sensor_front_left] * sensor_to_robot[sensor_front_right]) *0.8 + 0.5
+                rotation = (sensor_to_robot[sensor_front_left] - sensor_to_robot[sensor_front_right] + sensor_to_robot[sensor_right] + sensor_to_robot[sensor_left])*2.0 + (sensor_to_robot[sensor_front] != 1.0) * 0.4 + (random.random() * 2.0 -1) * 0.5
+            
             elif wall < 0.5 :
-                translation = sensor_to_wall[sensor_front] * 0.8
-                rotation = ((random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.7 - (sensors[sensor_front_right]) *0.5 + (sensors[sensor_front_left]) *0.5  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5 + (sensors[sensor_rear_left]) * 0.5 - (sensors[sensor_rear_right]) * 0.5 ) * 0.3
+                translation = (sensor_to_wall[sensor_front] * 0.9) 
+                rotation = ( (1-sensors[sensor_front]) * 0.7 - (sensors[sensor_front_right]) *0.5 + (sensors[sensor_front_left]) *0.5  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5 + (sensors[sensor_rear_left]) * 0.5 - (sensors[sensor_rear_right]) * 0.5 ) * 0.15 + random.random() * 0.8 -0.4
+                
             else:
                 translation = 1
                 rotation = (random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.8 - (sensors[sensor_front_right]) *0.6 + (sensors[sensor_front_left]) *0.6  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5
-           
+
         # Robot qui suit les ennemis
-        elif self.robot_id == 1:
+        elif self.robot_id == 2:
             #print(self.memory - sensors[sensor_front])
             if random.random() < 0.15 and abs(self.memory - sensors[sensor_front]) < 0.1 and abs(self.memory - 1.0)  > 0.05 :
-                translation = 1
-                rotation = random.choice([-1, -0.75, -0.5, 0, 0.5, 1])
+                translation = -1
+                rotation = random.random() * 2.0 -1
             elif team < 0.9 : 
                 translation, rotation = self.behavior_hateBot(sensor_to_team)
             
@@ -160,7 +154,6 @@ class Robot_player(Robot):
                 translation, rotation = self.behavior_loveBot(sensor_to_ennemi)
             else:
                 translation, rotation = self.behavior_cruise()
-            print("Robot : ", self.robot_id , "translation : ", translation, "rotation : ", rotation,  "memory : ", self.memory, " sensor :", sensors[sensor_front], " Différence : ", abs(sensors[sensor_front] - self.memory) )
         #Algo génétique
         elif self.robot_id == 3:
 
@@ -178,9 +171,9 @@ class Robot_player(Robot):
                 translation = math.tanh ( self.param[0] + self.param[1] * sensors[sensor_front_left] + self.param[2] * sensors[sensor_front] + self.param[3] * sensors[sensor_front_right] )
                 rotation = math.tanh ( self.param[4] + self.param[5] * sensors[sensor_front_left] + self.param[6] * sensors[sensor_front] + self.param[7] * sensors[sensor_front_right] )
         
-      
-        
+
         self.memory = sensors[sensor_front]
+      
 
         return translation, rotation, False
 
