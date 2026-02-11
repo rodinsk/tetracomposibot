@@ -1,8 +1,2 @@
 __pycache__/
-arenas_eval.py
-config_Painwars_eval.py
-go_tournament_eval
-go_tournament_eval.sh
-go_tournament_eval_windows.ps1
-go_tournament_windows.ps1
 robot_test.py
