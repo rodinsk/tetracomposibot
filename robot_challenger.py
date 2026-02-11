@@ -75,7 +75,7 @@ class Robot_player(Robot):
                 translation = sensors[sensor_front]*0.1+0.7
                 rotation = 0.2 * sensors[sensor_left] + 0.2 * sensors[sensor_front_left] - 0.2 * sensors[sensor_right] - 0.2 * sensors[sensor_front_right] + (random.random()-0.5)*1. #+ sensors[sensor_front] * 0.1
         #Robot qui évite tout
-        elif self.robot_id == 1:
+        elif self.robot_id == 2:
             if random.random() < 0.1 and ( abs(self.memory - sensors[sensor_front]) < 0.05 or wall < 0.1 ) :
                 translation = -0.25
                 rotation = random.choice([-0.5, 0, 0.5])
@@ -93,7 +93,7 @@ class Robot_player(Robot):
                 rotation = (random.random() * 2.0 - 1 )*(1-sensors[sensor_front]) * 0.8 - (sensors[sensor_front_right]) *0.6 + (sensors[sensor_front_left]) *0.6  + (sensors[sensor_left]) * 0.5 - (sensors[sensor_right]) * 0.5
 
         # Robot qui suit les ennemis
-        elif self.robot_id == 2:
+        elif self.robot_id == 1:
             #print(self.memory - sensors[sensor_front])
             if random.random() < 0.15 and abs(self.memory - sensors[sensor_front]) < 0.1 and abs(self.memory - 1.0)  > 0.05 :
                 translation = -1
